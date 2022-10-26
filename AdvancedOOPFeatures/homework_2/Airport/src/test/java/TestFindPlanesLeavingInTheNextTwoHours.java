@@ -1,5 +1,5 @@
+package test.java;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
-
 import com.skillbox.airport.Aircraft;
 import com.skillbox.airport.Airport;
 import com.skillbox.airport.Flight;
@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.IntStream;
+
+import main.java.Main;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
