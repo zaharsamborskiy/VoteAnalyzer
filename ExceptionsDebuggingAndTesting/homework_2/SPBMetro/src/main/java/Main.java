@@ -10,9 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+
 public class Main {
     private static final String DATA_FILE = "src/main/resources/map.json";
     private static Scanner scanner;
+
 
     private static StationIndex stationIndex;
 
@@ -56,7 +58,7 @@ public class Main {
     }
 
     private static Station takeStation(String message) {
-        for (; ; ) {
+        for (;;) {
             System.out.println(message);
             String line = scanner.nextLine().trim();
             Station station = stationIndex.getStation(line);

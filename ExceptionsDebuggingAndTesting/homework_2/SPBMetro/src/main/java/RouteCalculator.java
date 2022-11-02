@@ -22,12 +22,13 @@ public class RouteCalculator {
         }
 
         route = getRouteWithOneConnection(from, to);
-        if (route != null) {
+        if (route != null && route.size() != 0) {
             return route;
         }
 
         route = getRouteWithTwoConnections(from, to);
         return route;
+
     }
 
     public static double calculateDuration(List<Station> route) {
