@@ -41,7 +41,6 @@ public class Parser {
         return comparison;
     }
 
-
     public Map<String, String> parseDepth1() throws Exception {
         JSONParser parser = new JSONParser();
         FileReader reader = new FileReader(finder().get(1));

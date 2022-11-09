@@ -13,24 +13,13 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import java.util.List;
-import java.util.Map;
+
 
 
 public class Metro  {
-    static Parser parser = new Parser();
-    public static Map<String, String> mapWithDepth;
-
-    static {
-        try {
-            mapWithDepth = parser.depthMapComparison();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     public Metro() throws Exception {
     }
-
 
     public void downloadJsonInfo()throws Exception{
 
@@ -55,7 +44,6 @@ public class Metro  {
          }
      }
 
-
     public static JSONArray getArrayStations(Elements stationElements) {
         List<DStations> stationsList = new ArrayList<>(); // здесь станции с именами и номерами линий
         JSONArray stations = new JSONArray();
@@ -65,24 +53,16 @@ public class Metro  {
             Elements tableAllnames = tableElements.select("span.name"); //перебор всех имен в таблицах
             for (Element nameStation : tableAllnames) { // конкретное имя станции
                String numberLine = tableElements.children().attr("data-line"); // конкретная линия станции
-                stationsList.add(new DStations(nameStation.text(), numberLine, "", "", false));
+                stationsList.add(new DStations(nameStation.text(), numberLine));
             }
         }
-
-        Map<String, String> mapForDepth = mapWithDepth;
-        for (Map.Entry<String, String> entryWithDepth : mapForDepth.entrySet()) {
-        }
-
-
             for (DStations d : stationsList) {
                 JSONObject object = new JSONObject();
                 object.put("name", d.getName());
                 object.put("number Line", d.getLine());
-                object.put("date", d.getDate());
-                object.put("depth", d.getDepth());
-                object.put("hasConnect", d.isHasConnect());
                 stations.add(object);
-            }
+        }
+
         return stations;
     }
 

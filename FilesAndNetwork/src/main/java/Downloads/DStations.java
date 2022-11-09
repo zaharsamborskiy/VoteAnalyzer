@@ -7,15 +7,17 @@ public class DStations {
 
     String date ="";
 
-    String depth;
-    boolean hasConnect =false;
+    String depth = "";
+    boolean hasConnect = false;
 
-    public DStations(String station, String line, String date, String depth, boolean hasConnect){
+    public DStations(String station, String line){
         this.name = station;
         this.line = line;
+
     }
-    public void setDepth(String depth) {
+    public Object setDepth(String depth) {
         this.depth = depth;
+        return null;
     }
     public String getName() {
         return name;
