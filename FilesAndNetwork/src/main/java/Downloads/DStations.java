@@ -1,21 +1,24 @@
 package Downloads;
 
 public class DStations {
-    private String station;
+    private String name;
     private String line;
 
 
     String date ="";
-    String depth ="";
+
+    String depth;
     boolean hasConnect =false;
 
     public DStations(String station, String line, String date, String depth, boolean hasConnect){
-        this.station = station;
+        this.name = station;
         this.line = line;
     }
-
-    public String getStation() {
-        return station;
+    public void setDepth(String depth) {
+        this.depth = depth;
+    }
+    public String getName() {
+        return name;
     }
 
     public String getLine() {

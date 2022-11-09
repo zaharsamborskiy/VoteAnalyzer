@@ -11,18 +11,34 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+
 import java.util.List;
-
-public class Metro {
-
+import java.util.Map;
 
 
-     public void downloadJsonInfo()throws Exception{
+public class Metro  {
+    static Parser parser = new Parser();
+    public static Map<String, String> mapWithDepth;
+
+    static {
+        try {
+            mapWithDepth = parser.depthMapComparison();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Metro() throws Exception {
+    }
+
+
+    public void downloadJsonInfo()throws Exception{
+
          String html = parseFile("data/code.html");
          Document doc = Jsoup.parse(html);
 
          Elements lineElement = doc.select("span.js-metro-line");
-         Elements stationElement = doc.select("span.name");
+         Elements stationElement = doc.select("div.js-depend");
          JSONObject objectForJson = new JSONObject();
 
          PrintWriter writer = new PrintWriter("src/main/resourses/metro.json");
@@ -40,46 +56,33 @@ public class Metro {
      }
 
 
-//     public static JSONObject getObjectStation(Elements stationElements){
-//         List<DStations> stList = new ArrayList<>();
-//         for (Element element : stationElements){
-//             String numberLine = element.parents().attr("data-line");
-//             Elements nameStEl = element.select("span.name");
-//             for (Element elementstation : nameStEl) {
-//                 String nameStation = elementstation.text();
-//                 stList.add(new DStations(nameStation, numberLine));
-//             }
-//         }
-//         HashMap<String, List<String>> stationMap = stList.stream()
-//                 .collect(Collectors.groupingBy(DStations::getLine
-//                         , LinkedHashMap::new
-//                         , Collectors.mapping(
-//                                 DStations::getStation,
-//                                 Collectors.toList())));
-//         return new JSONObject(stationMap);
-//     }
-
     public static JSONArray getArrayStations(Elements stationElements) {
-
-        List<DStations> stationsList = new ArrayList<>();
+        List<DStations> stationsList = new ArrayList<>(); // здесь станции с именами и номерами линий
         JSONArray stations = new JSONArray();
 
-        for (Element e : stationElements){
-            Elements namest = e.select("span.name");
-            String numberLine = e.attr("data-line");
 
-            stationsList.add(new DStations(namest.text(),numberLine,"","",false));
+        for (Element tableElements : stationElements) {
+            Elements tableAllnames = tableElements.select("span.name"); //перебор всех имен в таблицах
+            for (Element nameStation : tableAllnames) { // конкретное имя станции
+               String numberLine = tableElements.children().attr("data-line"); // конкретная линия станции
+                stationsList.add(new DStations(nameStation.text(), numberLine, "", "", false));
+            }
         }
-        for (DStations d : stationsList){
-            JSONObject object = new JSONObject();
-            object.put("name", d.getStation());
-            object.put("number Line", d.getLine());
-            object.put("date", d.getDate());
-            object.put("depth", d.getDepth());
-            object.put("hasConnect", d.isHasConnect());
-            stations.add(object);
 
+        Map<String, String> mapForDepth = mapWithDepth;
+        for (Map.Entry<String, String> entryWithDepth : mapForDepth.entrySet()) {
         }
+
+
+            for (DStations d : stationsList) {
+                JSONObject object = new JSONObject();
+                object.put("name", d.getName());
+                object.put("number Line", d.getLine());
+                object.put("date", d.getDate());
+                object.put("depth", d.getDepth());
+                object.put("hasConnect", d.isHasConnect());
+                stations.add(object);
+            }
         return stations;
     }
 
