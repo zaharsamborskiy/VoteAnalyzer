@@ -12,6 +12,7 @@ import java.util.*;
 
 public class Parser {
     public Parser() {
+
     }
 
     private static final String DATA_GET = "data";
@@ -104,8 +105,7 @@ public class Parser {
         return comparisonSecondStep;
     }
 
-
-    public Map<String,String> parseDates1csv() throws Exception {
+    public static Map<String,String> parseDates1csv() throws Exception {
         Map<String,String> mapDates1csv = new HashMap<>();
 
         String line;
@@ -117,23 +117,23 @@ public class Parser {
         reader.close();
         return mapDates1csv;
     }
-    public Map<String, String> parseDates2json() throws Exception {
+    public static Map<String, String> parseDates2json() throws Exception {
 
         JSONParser parser = new JSONParser();
         FileReader reader = new FileReader(GET_JSONDATE2);
         JSONArray arrayJsonobject = (JSONArray) parser.parse(reader);
 
-        Map<String, String> mapDepht = new HashMap<>();
+        Map<String, String> mapDates2 = new HashMap<>();
         for (Object o : arrayJsonobject) {
             JSONObject jsonObjects = (JSONObject) o;
             String name = (String) jsonObjects.get("name");
             String date = String.valueOf(jsonObjects.get("date"));
-            mapDepht.put(name, date);
+            mapDates2.put(name, date);
         }
-        return mapDepht;
+        return mapDates2;
     }
 
-    public Map<String,String> parseDates3csv() throws Exception {
+    public static Map<String,String> parseDates3csv() throws Exception {
         Map<String,String> mapDates3csv = new HashMap<>();
 
         String line;
@@ -146,7 +146,7 @@ public class Parser {
         return mapDates3csv;
     }
 
-    public Map<String, String> parseDepth1json() throws Exception {
+    public static Map<String, String> parseDepth1json() throws Exception {
         JSONParser parser = new JSONParser();
         FileReader reader = new FileReader(GET_JSONDEPTH1);
         JSONArray arrayJsonobject = (JSONArray) parser.parse(reader);
@@ -161,7 +161,7 @@ public class Parser {
         return mapDepht1;
     }
 
-    public Map<String,String> parseDepth2csv() throws Exception {
+    public static Map<String,String> parseDepth2csv() throws Exception {
         Map<String,String> mapDepth2csv = new HashMap<>();
 
         String line;
@@ -176,7 +176,7 @@ public class Parser {
     return mapDepth2csv;
     }
 
-    public Map<String, String> parseDepth3json() throws Exception {
+    public static Map<String, String> parseDepth3json() throws Exception {
 
         JSONParser parser = new JSONParser();
         FileReader reader = new FileReader(GET_JSONDEPTH3);

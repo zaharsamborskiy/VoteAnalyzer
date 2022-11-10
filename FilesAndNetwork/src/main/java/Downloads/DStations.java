@@ -5,16 +5,25 @@ public class DStations {
     private String line;
 
 
+    public DStations(String name, String line){
+        this.name = name;
+        this.line = line;
+    }
+
     String date ="";
 
     String depth = "";
     boolean hasConnect = false;
-
-    public DStations(String station, String line){
-        this.name = station;
+    public DStations(String name, String line, String date,String depth, boolean hasConnect){
+        this.name = name;
         this.line = line;
+        this.date = date;
+        this.depth = depth;
+        this.hasConnect = hasConnect;
 
     }
+
+
     public Object setDepth(String depth) {
         this.depth = depth;
         return null;

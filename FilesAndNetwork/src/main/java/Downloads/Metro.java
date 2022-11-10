@@ -18,7 +18,9 @@ import java.util.List;
 
 public class Metro  {
 
+
     public Metro() throws Exception {
+
     }
 
     public void downloadJsonInfo()throws Exception{
@@ -44,7 +46,7 @@ public class Metro  {
          }
      }
 
-    public static JSONArray getArrayStations(Elements stationElements) {
+    public JSONArray getArrayStations(Elements stationElements) {
         List<DStations> stationsList = new ArrayList<>(); // здесь станции с именами и номерами линий
         JSONArray stations = new JSONArray();
 
