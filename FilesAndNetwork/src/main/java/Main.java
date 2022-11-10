@@ -1,6 +1,9 @@
 import Downloads.Metro;
 import Downloads.Parser;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class Main {
@@ -11,15 +14,15 @@ public class Main {
 
         Metro metroInfo = new Metro();
         Parser parser = new Parser();
-        System.out.println(parser.depthMapComparison());
         metroInfo.downloadJsonInfo();//загрузка в json файл
 
-        Map<String, String> mapForDepth = parser.depthMapComparison();
-        for (Map.Entry<String, String> entryWithDepth : mapForDepth.entrySet()) {
-        }
 
+
+        System.out.println("Результат сравнения глубин "  + parser.depthMapComparison().size() + " -> " + parser.depthMapComparison() + "\n");
+        System.out.println("Результат сравнения дат " + parser.dateMapComparison().size() + " -> " +  parser.dateMapComparison());
 
     }
+
 }
 
 
