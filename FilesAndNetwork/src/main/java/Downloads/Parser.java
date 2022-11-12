@@ -168,8 +168,8 @@ public class Parser {
         BufferedReader reader = new BufferedReader(new FileReader(GET_CSVDEPTH2));
         reader.readLine();
         while ((line = reader.readLine()) != null) {
-            String replace = line.replaceAll("[а-яА-я\"ёЁ]", "").trim();
-            mapDepth2csv.put((line.replaceAll("[^а-яА-я]", "").trim()) ,replace.replaceFirst("[?',']", ""));
+            String replace = line.replaceAll("[а-яА-Я\"ёЁ]", "").trim();
+            mapDepth2csv.put((line.replaceAll("[^а-яА-Я]", "").trim()) ,replace.replaceFirst("[?',']", ""));
             }
         reader.close();
 

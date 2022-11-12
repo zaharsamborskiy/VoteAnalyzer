@@ -1,19 +1,22 @@
 package Downloads;
 
-public class DStations {
+import java.util.TreeSet;
+
+public class DStations implements Comparable<DStations>{
     private String name;
     private String line;
+    String date;
 
+    String depth;
+    boolean hasConnect;
+
+    private TreeSet<DStations> setStations;
 
     public DStations(String name, String line){
         this.name = name;
         this.line = line;
     }
 
-    String date ="";
-
-    String depth = "";
-    boolean hasConnect = false;
     public DStations(String name, String line, String date,String depth, boolean hasConnect){
         this.name = name;
         this.line = line;
@@ -23,11 +26,10 @@ public class DStations {
 
     }
 
-
-    public Object setDepth(String depth) {
-        this.depth = depth;
-        return null;
+    public TreeSet<DStations> getSetStations() {
+        return setStations;
     }
+
     public String getName() {
         return name;
     }
@@ -45,5 +47,21 @@ public class DStations {
 
     public boolean isHasConnect() {
         return hasConnect;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        return compareTo((DStations) obj) == 0;
+    }
+
+    @Override
+    public int compareTo(DStations station)
+    {
+        int lineComparison = line.compareTo(station.getLine());
+        if(lineComparison != 0) {
+            return lineComparison;
+        }
+        return name.compareToIgnoreCase(station.getName());
     }
 }

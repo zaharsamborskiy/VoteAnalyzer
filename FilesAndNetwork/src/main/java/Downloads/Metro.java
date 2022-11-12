@@ -10,18 +10,18 @@ import org.jsoup.select.Elements;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-
-import java.util.List;
+import java.util.*;
 
 
 
 public class Metro  {
 
 
+
     public Metro() throws Exception {
 
     }
+
 
     public void downloadJsonInfo()throws Exception{
 
@@ -30,12 +30,16 @@ public class Metro  {
 
          Elements lineElement = doc.select("span.js-metro-line");
          Elements stationElement = doc.select("div.js-depend");
+         Elements connections = doc.select("div.js-depend");
+
          JSONObject objectForJson = new JSONObject();
 
-         PrintWriter writer = new PrintWriter("src/main/resourses/metro.json");
+         PrintWriter writer = new PrintWriter("src/main/resources/metro.json");
 
          objectForJson.put("stations", getArrayStations(stationElement));
+         objectForJson.put("connections:",getConnections(connections));
          objectForJson.put("lines", getArrayLine(lineElement));
+
 
          try {
              writer.write(objectForJson.toJSONString());
@@ -44,6 +48,33 @@ public class Metro  {
          }catch (Exception e) {
              e.printStackTrace();
          }
+     }
+
+     public JSONArray getConnections(Elements e){
+        List<DStations> stationList = new ArrayList<>();
+        TreeMap<String, String> map = new TreeMap();
+        JSONArray stations = new JSONArray();
+
+        for (Element tableE : e){
+            Elements tableAllnames = tableE.select("span.name");
+            for (Element el : tableAllnames){
+                String numLine = tableE.children().attr("data-line");
+                stationList.add(new DStations(el.text(), numLine));
+                map.put(el.text(),numLine);
+            }
+        }
+        for (DStations l : stationList){
+            for (Map.Entry<String, String> s : map.entrySet()){
+                JSONObject object = new JSONObject();
+                if (!(l.getLine().equals(s.getValue())) && l.getName().equals(s.getKey())){
+                    object.put("connections:", true);
+                    object.put("name:", s.getKey());
+                    object.put("line:", s.getValue());
+                    stations.add(object);
+                }
+            }
+        }
+        return stations;
      }
 
     public JSONArray getArrayStations(Elements stationElements) {
