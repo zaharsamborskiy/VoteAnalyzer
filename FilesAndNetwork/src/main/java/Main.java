@@ -29,7 +29,8 @@ public class Main {
         }catch (Exception e) {
             e.printStackTrace();
         }
-
+//        Parser parser = new Parser();
+//        System.out.println(parser.parseJson());
     }
 
     private static JSONArray getArrayStationsParam() throws Exception{

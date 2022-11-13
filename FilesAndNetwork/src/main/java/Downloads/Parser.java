@@ -9,8 +9,9 @@ import java.io.*;
 import java.util.*;
 
 public class Parser {
+    public Map<String, String> hashMap;
     public Parser() {
-
+        hashMap = new HashMap<>();
     }
 
     private static final String DATA_GET = "data";
@@ -189,6 +190,28 @@ public class Parser {
         }
         return mapDepht3;
     }
+
+//    public Map<String, String> parseJson() throws Exception{
+//        Map<String, String> map = new TreeMap<>();
+//        JSONParser parser = new JSONParser();
+//
+//        JSONObject parsarray = (JSONObject) parser.parse(new InputStreamReader(new FileInputStream(("src/main/resources/metro.json"))));
+//        JSONArray array = (JSONArray) parsarray.get("stations");
+//
+//
+//        for(Object o : array) {
+//            for (Object ob : array){
+//            String numberLine = (String) ((JSONObject) o).get("number Line");
+//            String name = (String) ((JSONObject) ob).get("name");
+//
+//
+//            Line line = new Line(numberLine, name);
+//            map.put(line.getNumber(), name);
+//        }
+//    }
+//        return map;
+//    }
+
 
 
     public static List<File> finder(){

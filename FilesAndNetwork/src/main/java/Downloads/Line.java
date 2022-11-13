@@ -27,5 +27,4 @@ public class Line {
             return name;
         }
 
-
 }
