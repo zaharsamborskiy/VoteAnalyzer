@@ -5,6 +5,7 @@ import org.json.simple.parser.JSONParser;
 
 
 import java.io.*;
+
 import java.util.*;
 
 public class Main {
@@ -17,10 +18,10 @@ public class Main {
         metroInfo.downloadJsonInfo();//загрузка в metro.json
 
         JSONObject objectForJson = new JSONObject();
-        objectForJson.put("stations", getArrayStationsParam()); //загрузка в json.stations
+        objectForJson.put("stations", getArrayStationsParam());
 
 
-        PrintWriter writer = new PrintWriter("src/main/resources/stations.json");
+        PrintWriter writer = new PrintWriter("src/main/resources/stations.json"); //загрузка в json.stations
         try {
             writer.write(objectForJson.toJSONString());
             writer.flush();
@@ -28,10 +29,11 @@ public class Main {
         }catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
     private static JSONArray getArrayStationsParam() throws Exception{
-        List<DStations> stationsList = new ArrayList<>();
+        List<Stations> stationsList = new ArrayList<>();
         Parser parser = new Parser();
 
         Map<String, String> mapGetDepths = parser.depthMapComparison();
@@ -57,13 +59,12 @@ public class Main {
                                b = entryBool.getValue();
                            }
                        }
-                       stationsList.add(new DStations(name,line,date,depth,b));
+                       stationsList.add(new Stations(name,line,date,depth,b));
                    }
                 }
             }
         }
-
-        for (DStations s : stationsList){
+        for (Stations s : stationsList){
             JSONObject object = new JSONObject();
             object.put("name:", s.getName());
             object.put("line:", s.getLine());
@@ -72,8 +73,6 @@ public class Main {
             object.put("connections:", s.isHasConnect());
             stations.add(object);
         }
-
-
         return stations;
     }
 
@@ -116,6 +115,7 @@ public class Main {
 
         return map;
     }
-    }
+
+}
 
 

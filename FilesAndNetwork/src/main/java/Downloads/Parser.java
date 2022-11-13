@@ -4,9 +4,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
 
 import java.util.*;
 
@@ -23,7 +21,7 @@ public class Parser {
     private static final File GET_JSONDATE2 = finder().get(0);
     private static final File GET_CSVDATE3 = finder().get(5);
 
-    public Map<String, String> dateMapComparison() throws Exception{
+    public Map<String, String> dateMapComparison() throws Exception {
         Map<String, String> comparisonFirstStep = new TreeMap<>();
         Map<String, String> comparisonSecondStep = new TreeMap<>();
         String k;
@@ -33,28 +31,28 @@ public class Parser {
         Map<String, String> d2 = parseDates2json();
         Map<String, String> d3 = parseDates3csv();
 
-        for (Map.Entry<String, String> entry1 : d1.entrySet()){
-            for (Map.Entry<String, String> entry2 : d2.entrySet()){
-                if (entry1.getKey().equals(entry2.getKey()) && entry1.getValue().equals(entry2.getValue())){
+        for (Map.Entry<String, String> entry1 : d1.entrySet()) {
+            for (Map.Entry<String, String> entry2 : d2.entrySet()) {
+                if (entry1.getKey().equals(entry2.getKey()) && entry1.getValue().equals(entry2.getValue())) {
                     k = entry1.getKey();
                     v = entry1.getValue();
                 } else {
                     k = entry2.getKey();
                     v = entry2.getValue();
                 }
-                comparisonFirstStep.put(k,v);
+                comparisonFirstStep.put(k, v);
             }
         }
-        for (Map.Entry<String, String> entry2 : comparisonFirstStep.entrySet()){
-            for (Map.Entry<String, String> entry3 : d3.entrySet()){
-                if (entry2.getKey().equals(entry3.getKey()) && entry2.getValue().equals(entry3.getValue()) ){
+        for (Map.Entry<String, String> entry2 : comparisonFirstStep.entrySet()) {
+            for (Map.Entry<String, String> entry3 : d3.entrySet()) {
+                if (entry2.getKey().equals(entry3.getKey()) && entry2.getValue().equals(entry3.getValue())) {
                     k = entry2.getKey();
                     v = entry2.getValue();
                 } else {
                     k = entry3.getKey();
                     v = entry3.getValue();
                 }
-                comparisonSecondStep.put(k,v);
+                comparisonSecondStep.put(k, v);
             }
         }
         return comparisonSecondStep;
@@ -72,10 +70,10 @@ public class Parser {
 
         for (Map.Entry<String, String> entry1 : d1.entrySet()) {
             for (Map.Entry<String, String> entry2 : d2.entrySet()) {
-                if ((entry1.getValue().equals("?")) || entry1.getValue().equals("0")){
+                if ((entry1.getValue().equals("?")) || entry1.getValue().equals("0")) {
                     k = entry1.getKey();
                     v = entry2.getValue();
-                } else if ((entry2.getValue().equals("?")) || entry2.getValue().equals("0")){
+                } else if ((entry2.getValue().equals("?")) || entry2.getValue().equals("0")) {
                     k = entry1.getKey();
                     v = entry1.getValue();
                 } else {
@@ -85,13 +83,12 @@ public class Parser {
                 comparisonFirstStep.put(k, v);
             }
         }
-        for (Map.Entry<String, String> entry2 : comparisonFirstStep.entrySet()){
-            for (Map.Entry<String, String> entry3 : d3.entrySet()){
+        for (Map.Entry<String, String> entry2 : comparisonFirstStep.entrySet()) {
+            for (Map.Entry<String, String> entry3 : d3.entrySet()) {
                 if ((entry3.getValue().equals("?")) || entry3.getValue().equals("0")) {
                     k = entry3.getKey();
                     v = entry2.getValue();
-                }
-                else if ((entry2.getValue().equals("?")) || entry2.getValue().equals("0")){
+                } else if ((entry2.getValue().equals("?")) || entry2.getValue().equals("0")) {
                     k = entry3.getKey();
                     v = entry3.getValue();
                 } else {
@@ -105,18 +102,19 @@ public class Parser {
         return comparisonSecondStep;
     }
 
-    public static Map<String,String> parseDates1csv() throws Exception {
-        Map<String,String> mapDates1csv = new HashMap<>();
+    public static Map<String, String> parseDates1csv() throws Exception {
+        Map<String, String> mapDates1csv = new HashMap<>();
 
         String line;
         BufferedReader reader = new BufferedReader(new FileReader(GET_CSVDATE1));
         reader.readLine();
         while ((line = reader.readLine()) != null) {
-            mapDates1csv.put((line.replaceAll("[^а-яА-я]", "").trim()) , (line.replaceAll("[а-яА-я\"ёЁ\",]", "").trim()));
+            mapDates1csv.put((line.replaceAll("[^а-яА-я]", "").trim()), (line.replaceAll("[а-яА-я\"ёЁ\",]", "").trim()));
         }
         reader.close();
         return mapDates1csv;
     }
+
     public static Map<String, String> parseDates2json() throws Exception {
 
         JSONParser parser = new JSONParser();
@@ -133,14 +131,14 @@ public class Parser {
         return mapDates2;
     }
 
-    public static Map<String,String> parseDates3csv() throws Exception {
-        Map<String,String> mapDates3csv = new HashMap<>();
+    public static Map<String, String> parseDates3csv() throws Exception {
+        Map<String, String> mapDates3csv = new HashMap<>();
 
         String line;
         BufferedReader reader = new BufferedReader(new FileReader(GET_CSVDATE3));
         reader.readLine();
         while ((line = reader.readLine()) != null) {
-            mapDates3csv.put((line.replaceAll("[^а-яА-я]", "").trim()) , (line.replaceAll("[а-яА-я\"ёЁ\",]", "").trim()));
+            mapDates3csv.put((line.replaceAll("[^а-яА-я]", "").trim()), (line.replaceAll("[а-яА-я\"ёЁ\",]", "").trim()));
         }
         reader.close();
         return mapDates3csv;
@@ -161,19 +159,19 @@ public class Parser {
         return mapDepht1;
     }
 
-    public static Map<String,String> parseDepth2csv() throws Exception {
-        Map<String,String> mapDepth2csv = new HashMap<>();
+    public static Map<String, String> parseDepth2csv() throws Exception {
+        Map<String, String> mapDepth2csv = new HashMap<>();
 
         String line;
         BufferedReader reader = new BufferedReader(new FileReader(GET_CSVDEPTH2));
         reader.readLine();
         while ((line = reader.readLine()) != null) {
             String replace = line.replaceAll("[а-яА-Я\"ёЁ]", "").trim();
-            mapDepth2csv.put((line.replaceAll("[^а-яА-Я]", "").trim()) ,replace.replaceFirst("[?',']", ""));
-            }
+            mapDepth2csv.put((line.replaceAll("[^а-яА-Я]", "").trim()), replace.replaceFirst("[?',']", ""));
+        }
         reader.close();
 
-    return mapDepth2csv;
+        return mapDepth2csv;
     }
 
     public static Map<String, String> parseDepth3json() throws Exception {
@@ -189,19 +187,15 @@ public class Parser {
             String depth = String.valueOf(jsonObjects.get("depth_meters"));
             mapDepht3.put(name, depth);
         }
-
         return mapDepht3;
     }
+
 
     public static List<File> finder(){
         List<File> fileList = new ArrayList<>();
         serchFiles(new File(DATA_GET), fileList);
-        int i = 0;
-        for (File file : fileList) {
-//            System.out.println("Файл лежит под номером -> " + (i++) + " в директории -> " + file);
-    }
         return fileList;
-}
+    }
 
     public static void serchFiles(File rootFile, List<File> fileList) {
         if (rootFile.isDirectory()) {

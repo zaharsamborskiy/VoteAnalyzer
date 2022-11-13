@@ -1,8 +1,6 @@
 package Downloads;
 
-import java.util.TreeSet;
-
-public class DStations implements Comparable<DStations>{
+public class Stations implements Comparable<Stations>{
     private String name;
     private String line;
     String date;
@@ -10,24 +8,18 @@ public class DStations implements Comparable<DStations>{
     String depth;
     boolean hasConnect;
 
-    private TreeSet<DStations> setStations;
-
-    public DStations(String name, String line){
+    public Stations(String name, String line){
         this.name = name;
         this.line = line;
     }
 
-    public DStations(String name, String line, String date,String depth, boolean hasConnect){
+    public Stations(String name, String line, String date, String depth, boolean hasConnect){
         this.name = name;
         this.line = line;
         this.date = date;
         this.depth = depth;
         this.hasConnect = hasConnect;
 
-    }
-
-    public TreeSet<DStations> getSetStations() {
-        return setStations;
     }
 
     public String getName() {
@@ -52,11 +44,11 @@ public class DStations implements Comparable<DStations>{
     @Override
     public boolean equals(Object obj)
     {
-        return compareTo((DStations) obj) == 0;
+        return compareTo((Stations) obj) == 0;
     }
 
     @Override
-    public int compareTo(DStations station)
+    public int compareTo(Stations station)
     {
         int lineComparison = line.compareTo(station.getLine());
         if(lineComparison != 0) {
