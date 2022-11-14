@@ -191,28 +191,23 @@ public class Parser {
         return mapDepht3;
     }
 
-//    public Map<String, String> parseJson() throws Exception{
-//        Map<String, String> map = new TreeMap<>();
-//        JSONParser parser = new JSONParser();
-//
-//        JSONObject parsarray = (JSONObject) parser.parse(new InputStreamReader(new FileInputStream(("src/main/resources/metro.json"))));
-//        JSONArray array = (JSONArray) parsarray.get("stations");
-//
-//
-//        for(Object o : array) {
-//            for (Object ob : array){
-//            String numberLine = (String) ((JSONObject) o).get("number Line");
-//            String name = (String) ((JSONObject) ob).get("name");
-//
-//
-//            Line line = new Line(numberLine, name);
-//            map.put(line.getNumber(), name);
-//        }
-//    }
-//        return map;
-//    }
+    public Map<String, List<String>> parseJson() throws Exception{
+        Map<String, List<String>> mapWithArray = new TreeMap<>();
+        JSONParser parser = new JSONParser();
+        JSONObject arrayJsonobject = (JSONObject) parser.parse(new InputStreamReader(new FileInputStream(("src/main/resources/metro.json"))));
 
 
+        JSONObject objects = (JSONObject) arrayJsonobject.get("stations");
+        Iterator<String> keys = objects.keySet().iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            if (objects.get(key) instanceof JSONArray) {
+                JSONArray array = (JSONArray) objects.get(key);
+                mapWithArray.put(key, array);
+            }
+        }
+        return mapWithArray;
+    }
 
     public static List<File> finder(){
         List<File> fileList = new ArrayList<>();

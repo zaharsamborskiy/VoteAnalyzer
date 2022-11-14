@@ -2,6 +2,10 @@ import Downloads.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 
 import java.io.*;
@@ -10,12 +14,12 @@ import java.util.*;
 
 public class Main {
 
-
     public static void main(String[] args) throws Exception {
 
 
         Metro metroInfo = new Metro();
         metroInfo.downloadJsonInfo();//загрузка в metro.json
+
 
         JSONObject objectForJson = new JSONObject();
         objectForJson.put("stations", getArrayStationsParam());
@@ -26,14 +30,18 @@ public class Main {
             writer.write(objectForJson.toJSONString());
             writer.flush();
             writer.close();
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-//        Parser parser = new Parser();
-//        System.out.println(parser.parseJson());
+
+        Parser parser = new Parser();
+        for (Map.Entry<String, List<String>> entry : parser.parseJson().entrySet()){
+            System.out.println("На линии " + entry.getKey() + " - " + entry.getValue().size() + " - станции");
+        }
+
     }
 
-    private static JSONArray getArrayStationsParam() throws Exception{
+    private static JSONArray getArrayStationsParam() throws Exception {
         List<Stations> stationsList = new ArrayList<>();
         Parser parser = new Parser();
 
@@ -43,29 +51,28 @@ public class Main {
         Map<String, Boolean> mapBoolean = getBoolean();
 
 
-
         JSONArray stations = new JSONArray();
 
-        for (Map.Entry<String, String> entryDepth : mapGetDepths.entrySet()){
-            for (Map.Entry<String, String> entryDates : mapGetDates.entrySet()){
-               for (Map.Entry<String, String> entryNameAndLine : mapNamesAndLines.entrySet()){
-                   if ((entryNameAndLine.getKey().equals(entryDepth.getKey())) && entryDates.getKey().equals(entryDepth.getKey())){
-                       String name = entryNameAndLine.getKey();
-                       String line = entryNameAndLine.getValue();
-                       String date = entryDates.getValue();
-                       String depth = entryDepth.getValue();
-                       boolean b = false;
-                       for (Map.Entry<String, Boolean> entryBool : mapBoolean.entrySet()){
-                           if (entryNameAndLine.getKey().equals(entryBool.getKey())){
-                               b = entryBool.getValue();
-                           }
-                       }
-                       stationsList.add(new Stations(name,line,date,depth,b));
-                   }
+        for (Map.Entry<String, String> entryDepth : mapGetDepths.entrySet()) {
+            for (Map.Entry<String, String> entryDates : mapGetDates.entrySet()) {
+                for (Map.Entry<String, String> entryNameAndLine : mapNamesAndLines.entrySet()) {
+                    if ((entryNameAndLine.getKey().equals(entryDepth.getKey())) && entryDates.getKey().equals(entryDepth.getKey())) {
+                        String name = entryNameAndLine.getKey();
+                        String line = entryNameAndLine.getValue();
+                        String date = entryDates.getValue();
+                        String depth = entryDepth.getValue();
+                        boolean b = false;
+                        for (Map.Entry<String, Boolean> entryBool : mapBoolean.entrySet()) {
+                            if (entryNameAndLine.getKey().equals(entryBool.getKey())) {
+                                b = entryBool.getValue();
+                            }
+                        }
+                        stationsList.add(new Stations(name, line, date, depth, b));
+                    }
                 }
             }
         }
-        for (Stations s : stationsList){
+        for (Stations s : stationsList) {
             JSONObject object = new JSONObject();
             object.put("name:", s.getName());
             object.put("line:", s.getLine());
@@ -77,46 +84,47 @@ public class Main {
         return stations;
     }
 
-    private static Map<String,String> getNameAndLine() throws Exception {
-        Map<String, String> mapGetNameAndLine = new TreeMap<>();
-        JSONParser parser = new JSONParser();
+    private static Map<String, String> getNameAndLine() throws Exception {
+        Map<String, String> map = new TreeMap<>();
+        List<Stations> stationsList = new ArrayList<>(); // здесь станции с именами и номерами линий
+        Metro metro = new Metro();
+        String html = metro.parseFile("data/code.html");
+        Document doc = Jsoup.parse(html);
+        Elements stationElement = doc.select("div.js-depend");
 
-        JSONObject arrayJsonobject = (JSONObject) parser.parse(new InputStreamReader(new FileInputStream(("src/main/resources/metro.json"))));
-
-        JSONArray objWithName = (JSONArray) arrayJsonobject.get("stations");
-        JSONArray objWithLine = (JSONArray) arrayJsonobject.get("lines");
-
-
-        for (Object o : objWithName) {
-            for (Object o1 : objWithLine) {
-                String name = (String) ((JSONObject) o).get("name");
-                if (((JSONObject) o).get("number Line").equals(((JSONObject)o1).get("number"))){ //Проверяем если номера линий совпали
-                    String nameLine = (String) ((JSONObject)o1).get("name"); // то берем имя линии
-                    mapGetNameAndLine.put(name, nameLine);
-                }
+        for (Element tableElements : stationElement) {
+            Elements tableAllnames = tableElements.select("span.name"); //перебор всех имен в таблицах
+            for (Element nameStation : tableAllnames) { // конкретное имя станции
+                String numberLine = tableElements.children().attr("data-line"); // конкретная линия станции
+                stationsList.add(new Stations(nameStation.text(), numberLine));
             }
         }
-
-        return mapGetNameAndLine;
-    }
-
-    private static Map<String, Boolean> getBoolean() throws Exception {
-        Map<String, Boolean> map = new TreeMap<>();
-        JSONParser parser = new JSONParser();
-
-        JSONObject arrayJsonobject = (JSONObject) parser.parse(new InputStreamReader(new FileInputStream(("src/main/resources/metro.json"))));
-
-
-        JSONArray objWithBoolean = (JSONArray) arrayJsonobject.get("connections:");
-        for (Object o : objWithBoolean){
-            String name = (String) ((JSONObject)o).get("name:");
-            boolean bool = (boolean) ((JSONObject)o).get("connections:");
-            map.put(name, bool);
+        for (Stations d : stationsList) {
+            map.put(d.getName(), d. getLine());
         }
-
         return map;
     }
 
-}
+        private static Map<String, Boolean> getBoolean () throws Exception {
+            Map<String, Boolean> map = new TreeMap<>();
+            JSONParser parser = new JSONParser();
+
+            JSONObject arrayJsonobject = (JSONObject) parser.parse(new InputStreamReader(new FileInputStream(("src/main/resources/metro.json"))));
+
+
+            JSONArray objWithBoolean = (JSONArray) arrayJsonobject.get("connections:");
+            for (Object o : objWithBoolean) {
+                String name = (String) ((JSONObject) o).get("name:");
+                boolean bool = (boolean) ((JSONObject) o).get("connections:");
+                map.put(name, bool);
+            }
+
+
+            return map;
+        }
+
+
+    }
+
 
 

@@ -1,14 +1,9 @@
 package Downloads;
 
-
-import java.util.List;
-
 public class Line {
 
     private String number;
     private String name;
-
-    private List<Stations> stationsList;
 
 
         public Line(String number, String name) {
@@ -16,9 +11,6 @@ public class Line {
             this.name = name;
         }
 
-    public List<Stations> getStationsList() {
-        return stationsList;
-    }
     public String getNumber() {
             return number;
         }

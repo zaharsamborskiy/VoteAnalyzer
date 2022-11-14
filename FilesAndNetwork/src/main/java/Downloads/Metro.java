@@ -11,9 +11,11 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class Metro  {
+
 
     public Metro() throws Exception {
 
@@ -75,10 +77,8 @@ public class Metro  {
         return stations;
      }
 
-    public JSONArray getArrayStations(Elements stationElements) {
+    public JSONObject getArrayStations(Elements stationElements) {
         List<Stations> stationsList = new ArrayList<>(); // здесь станции с именами и номерами линий
-        JSONArray stations = new JSONArray();
-
 
         for (Element tableElements : stationElements) {
             Elements tableAllnames = tableElements.select("span.name"); //перебор всех имен в таблицах
@@ -87,15 +87,15 @@ public class Metro  {
                 stationsList.add(new Stations(nameStation.text(), numberLine));
             }
         }
-            for (Stations d : stationsList) {
-                JSONObject object = new JSONObject();
-                object.put("name", d.getName());
-                object.put("number Line", d.getLine());
-                stations.add(object);
-        }
+        HashMap<String, List<String>> stationMap = stationsList.stream()
+                .collect(Collectors.groupingBy(Stations::getLine
+                        , LinkedHashMap::new
+                        , Collectors.mapping(
+                                Stations::getName,
+                                Collectors.toList())));
 
 
-        return stations;
+        return new JSONObject(stationMap);
     }
 
      public static JSONArray getArrayLine (Elements lineElements) {
@@ -117,7 +117,7 @@ public class Metro  {
      }
 
 
-    public static String parseFile(String path){
+    public String parseFile(String path){
         StringBuilder sb = new StringBuilder();
         try {
             List<String> lines = Files.readAllLines(Paths.get(path));

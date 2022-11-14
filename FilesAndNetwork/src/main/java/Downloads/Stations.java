@@ -1,12 +1,13 @@
 package Downloads;
 
-public class Stations implements Comparable<Stations>{
+public class Stations{
     private String name;
     private String line;
     String date;
 
     String depth;
     boolean hasConnect;
+
 
     public Stations(String name, String line){
         this.name = name;
@@ -19,7 +20,6 @@ public class Stations implements Comparable<Stations>{
         this.date = date;
         this.depth = depth;
         this.hasConnect = hasConnect;
-
     }
 
     public String getName() {
@@ -41,19 +41,4 @@ public class Stations implements Comparable<Stations>{
         return hasConnect;
     }
 
-    @Override
-    public boolean equals(Object obj)
-    {
-        return compareTo((Stations) obj) == 0;
-    }
-
-    @Override
-    public int compareTo(Stations station)
-    {
-        int lineComparison = line.compareTo(station.getLine());
-        if(lineComparison != 0) {
-            return lineComparison;
-        }
-        return name.compareToIgnoreCase(station.getName());
-    }
 }
