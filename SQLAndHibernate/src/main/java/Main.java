@@ -1,37 +1,30 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
-
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.boot.Metadata;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
 public class Main {
 
     public static void main(String[] args) {
-
-        String url = "jdbc:mysql://localhost:3306/skillbox";
-        String user = "root";
-        String path = "rootpass";
-
-        try {
-            Connection connection = DriverManager.getConnection(url, user, path);
-            Statement statement = connection.createStatement();
+        StandardServiceRegistry reg = new StandardServiceRegistryBuilder()
+                .configure("hibernate.cfg.xml").build();
+        Metadata metadata = new MetadataSources(reg).getMetadataBuilder().build();
+        SessionFactory sessionFactory = metadata.getSessionFactoryBuilder().build();
+        Session session = sessionFactory.openSession();
 
 
 
-            ResultSet firstQuery = statement.executeQuery
-                    ("SELECT course_name , count(*) subscription_date from purchaselist group by course_name");
-            while (firstQuery.next()){
-                String courseName = firstQuery.getString("course_name");
-                String countSales = firstQuery.getString("subscription_date");
-                double countsale = (Double.parseDouble(countSales));
-                System.out.println(courseName + " продано курсов за год - " + countSales + " - среднее количество покупок в месяц - " + countsale / 12);
-            }
-            firstQuery.close();
-            statement.close();
-            connection.close();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        Course course = session.get(Course.class, 3);
+        System.out.println(course.getName() + " - " + course.getStudensCount() + " учащихся");
+
+
+
+
+
+
+        sessionFactory.close();
     }
 
 }
