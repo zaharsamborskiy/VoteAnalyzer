@@ -14,15 +14,10 @@ public class Main {
         SessionFactory sessionFactory = metadata.getSessionFactoryBuilder().build();
         Session session = sessionFactory.openSession();
 
-
-
-        Course course = session.get(Course.class, 3);
-        System.out.println(course.getName() + " - " + course.getStudensCount() + " учащихся");
-
-
-
-
-
+        Subscriptions subscriptions = session.get(Subscriptions.class, new CompositeKey(1, 2));
+        System.out.println(subscriptions.getCourse().getName() + " - " + subscriptions.getStudent().getName() + " - " + subscriptions.getSubscriptionDate());
+        PurchaseList pl = session.get(PurchaseList.class, new KeyPL());
+        System.out.println(pl.getStudentName());//???
 
         sessionFactory.close();
     }
