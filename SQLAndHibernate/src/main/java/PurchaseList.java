@@ -1,36 +1,53 @@
-import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "purchaselist")
 public class PurchaseList {
+
     @EmbeddedId
-    private KeyPL id;
-    @Column(name = "student_name", insertable = false, updatable = false)
+    private CompositeKeyPurchase id;
+
+    @Column(name = "student_name", insertable = false, updatable = false, nullable = true)
     private String studentName;
-    @Column(name = "course_name", insertable = false, updatable = false)
+
+    @Column(name = "course_name", insertable = false, updatable = false, nullable = true)
     private String courseName;
-    @Column(name = "price", insertable = false, updatable = false)
+
     private int price;
     @Column(name = "subscription_date", insertable = false, updatable = false)
     private Date subscriptionDate;
+
     public PurchaseList() {}
-    public PurchaseList(KeyPL id) {
-        this.id = id;
+
+//    @ManyToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "course_name", referencedColumnName = "name", insertable = false, updatable = false)
+//    private Course course;
+//
+//    public Course getCourse() {
+//        return course;
+//    }
+//
+//    public void setCourse(Course course) {
+//        this.course = course;
+//    }
+
+    public String getStudentName() {
+        return studentName;
     }
-    public String getStudentName() {return studentName;}
-    public void setStudents(String students) {
+
+
+    public void setStudentName(String students) {
         this.studentName = students;
     }
 
-    public String getCourse() {
+    public String getCourseName() {
         return courseName;
     }
 
-    public void setCourse(String course) {
+    public void setCourseName(String course) {
         this.courseName = course;
     }
 
