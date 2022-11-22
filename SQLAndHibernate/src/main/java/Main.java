@@ -6,6 +6,7 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -29,15 +30,23 @@ public class Main {
 
 
         Transaction transaction = session.beginTransaction();
-        Linked linkedNew = new Linked();
+        List<LinkedKey> linkedKeys = new ArrayList<>();
         for (PurchaseList p : purchase){
             for (Students s : students){
-                if (p.getStudentName().equals(s.getName())){
-
+                for (Course c : courses){
+                    if (p.getStudentName().equals(s.getName()) &&p.getCourseName().equals(c.getName())){
+                        linkedKeys.add(new LinkedKey(s.getId(), c.getId()));
+                    }
                 }
             }
         }
-        session.saveOrUpdate(linkedNew);
+        Linked linked;
+        for (LinkedKey l : linkedKeys){
+            linked = new Linked();
+            linked.setId(new LinkedKey(l.getStudentId(), l.getCourseId()));
+            session.saveOrUpdate(linked);
+        }
+
         transaction.commit();
         sessionFactory.close();
     }
