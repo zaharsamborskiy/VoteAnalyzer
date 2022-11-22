@@ -1,23 +1,27 @@
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Date;
 
+
 @Entity
-@Table(name = "Subscriptions")
+@Table(name = "linkedpurchaselist")
 @Getter
 @Setter
-@EqualsAndHashCode
 @NoArgsConstructor
-public class Subscriptions implements Serializable {
+@AllArgsConstructor
+public class Linked implements Serializable {
 
     @EmbeddedId
-    private CompositeKey id;
+    private LinkedKey id;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "student_id", referencedColumnName = "id", insertable = false, updatable = false)
-    private Students student;
+    private Students students;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "course_id", referencedColumnName = "id", insertable = false, updatable = false)
@@ -26,4 +30,5 @@ public class Subscriptions implements Serializable {
     @Column(name = "subscription_date")
     private Date subscriptionDate;
 
+    private int price;
 }

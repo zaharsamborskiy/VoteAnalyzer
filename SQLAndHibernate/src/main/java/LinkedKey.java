@@ -1,19 +1,20 @@
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.*;
-
 import java.io.Serializable;
 
 @Embeddable
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode
-@NoArgsConstructor
-@AllArgsConstructor
-public class CompositeKey implements Serializable {
+public class LinkedKey implements Serializable {
+
     @Column(name = "student_id")
-    private int studentId;
+    private Integer studentId;
 
     @Column(name = "course_id")
-    private int courseId;
+    private Integer courseId;
+
 }
