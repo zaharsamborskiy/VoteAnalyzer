@@ -27,10 +27,17 @@ public class Main {
         String hqlCourse = "FROM " + Course.class.getSimpleName();
         List<Course> courses = session.createQuery(hqlCourse).getResultList();
 
+
         Transaction transaction = session.beginTransaction();
+        Linked linkedNew = new Linked();
+        for (PurchaseList p : purchase){
+            for (Students s : students){
+                if (p.getStudentName().equals(s.getName())){
 
-
-
+                }
+            }
+        }
+        session.saveOrUpdate(linkedNew);
         transaction.commit();
         sessionFactory.close();
     }
