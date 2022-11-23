@@ -27,4 +27,8 @@ public class Linked implements Serializable {
     @JoinColumn(name = "course_id", referencedColumnName = "id", insertable = false, updatable = false)
     private Course course;
 
+    private int price;
+
+    @Column(name = "subscription_date")
+    private Date subscriptionDate;
 }

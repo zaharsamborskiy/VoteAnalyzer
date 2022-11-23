@@ -16,5 +16,4 @@ public class LinkedKey implements Serializable {
 
     @Column(name = "course_id")
     private Integer courseId;
-
 }
