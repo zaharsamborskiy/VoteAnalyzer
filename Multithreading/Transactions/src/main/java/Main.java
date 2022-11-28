@@ -4,33 +4,42 @@ public class Main
 {
     public static void main(String[] args) {
         Bank bank = new Bank();
-        Map<String, Account> accs = bank.account();
+        Map<String, Account> accountMap = bank.account();
 
-        System.out.println("Сумма на банковском счете " + bank.getSumAllAccounts() + "\n");
+        System.out.println("Сумма на банковском счете ->->->->-> " + bank.getSumAllAccounts());
 
-        Account a1 = new Account();
-        String a1Name = accs.get("A1").getAccNumber();
-        int a1Money = (int) accs.get("A1").getMoney();
-
-        Account a2 = new Account();
-        String a2Name = accs.get("A2").getAccNumber();
-        int a2Money = (int) accs.get("A2").getMoney();
-
-
-        for (int i = 0; i <= 100; i++)
+        for (int i = 0; i <= 10; i++)
         {
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        bank.transfer(a2Name, a1Name, 5000);
-                        bank.transfer(a1Name, a2Name, 50000);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+            Thread thread = new Thread(() -> {
+                try
+                {
+                    for (int j = 0; j <= 50; j++)
+                    {
+                        String from = accountMap.get(createrNumber()).getAccNumber();
+                        String to = accountMap.get(createrNumber()).getAccNumber();
+                        int money = createrMoney();
+                        bank.transfer(from, to, money);
+                        System.out.println("Перевод от " + from + " к " + to + " в размере " + money + "р.");
                     }
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
             });
             thread.start();
         }
+
+        System.out.println("Сумма на банковском счете ->->->->-> " + bank.getSumAllAccounts());
+    }
+
+    public static String createrNumber()
+    {
+        int value = (int) ( 1 + Math.random() * 100);
+        String valueS = "A"+ value;
+        return valueS;
+    }
+    public static Integer createrMoney()
+    {
+        int value = (int) (1 + Math.random() * 100_000);
+        return value;
     }
 }
