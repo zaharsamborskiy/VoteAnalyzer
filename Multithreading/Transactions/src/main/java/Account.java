@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor()
 public class Account
 {
     private String accNumber;

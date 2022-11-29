@@ -63,6 +63,16 @@ public class Bank {
                         System.out.println("Недостаточно средств для перевода");
                     }
                 }
+                if (amount <= limit && getBalance(fromAccountNum) > amount)
+                {
+                    fromAccount.setMoney(accounts.get(fromAccountNum).getMoney() - amount);
+                    toAccount.setMoney(accounts.get(toAccountNum).getMoney() + amount);
+                    System.out.println(toAccountNum + ": перевод в размере " + amount + "р. от " + fromAccount.getAccNumber());
+                }
+                else
+                {
+                    System.out.println("Недостаточно средств для перевода");
+                }
             }
         }
     }
