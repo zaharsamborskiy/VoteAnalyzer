@@ -32,7 +32,7 @@ public class TestBank extends TestCase {
                 {
                     try {
                         bank.transfer(String.valueOf((int) Math.random() * 150),String.valueOf((int) Math.random() * 150), (int) (Math.random() * 100_00));
-                    } catch (InterruptedException e) {
+                    } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 }

@@ -6,14 +6,13 @@ public class Main
         Bank bank = new Bank();
         Map<String, Account> accountMap = bank.account();
         System.out.println("Сумма на банковском счете ->->->->-> " + bank.getSumAllAccounts());
-
         for (int i = 0; i <= 10; i++)
         {
             Thread thread = new Thread(() ->
             {
                 try
                 {
-                    for (int j = 0; j <= 10; j++)
+                    for (int j = 0; j <= 100; j++)
                     {
                         String from = accountMap.get(createrNumber()).getAccNumber();
                         String to = accountMap.get(createrNumber()).getAccNumber();
@@ -21,14 +20,13 @@ public class Main
                         bank.transfer(from, to, money);
                     }
                 }
-                catch (InterruptedException e)
+                catch (Exception e)
                 {
                     throw new RuntimeException(e);
                 }
             });
             thread.start();
         }
-        System.out.println("Сумма на банковском счете ->->->->-> " + bank.getSumAllAccounts());
     }
 
     public static String createrNumber()

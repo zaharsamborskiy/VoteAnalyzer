@@ -33,47 +33,33 @@ public class Bank {
      * метод isFraud. Если возвращается true, то делается блокировка счетов (как – на ваше
      * усмотрение)
      */
-    public void transfer(String fromAccountNum, String toAccountNum, long amount)
-            throws InterruptedException
-    {
+    public void transfer(final String fromAccountNum, final String toAccountNum, final long amount)
+            throws Exception {
         Account fromAccount = accounts.get(fromAccountNum);
         Account toAccount = accounts.get(toAccountNum);
-        boolean block;
-        synchronized (fromAccount)
-        {
-            synchronized (toAccount)
-            {
 
-                if (amount >= limit)
-                {
-                    block = isFraud(fromAccountNum,toAccountNum,amount);
-                    if (!block)
-                    {
-                        System.out.println(fromAccountNum + " перевел " + toAccountNum + " выше 50_000 -> аккаунты будут заблокированы");
-                        return;
-                    }
-                    if (getBalance(fromAccountNum) > amount)
-                    {
-                        fromAccount.setMoney(accounts.get(fromAccountNum).getMoney() - amount);
-                        toAccount.setMoney(accounts.get(toAccountNum).getMoney() + amount);
-                        System.out.println(toAccountNum + ": перевод в размере " + amount + "р. от " + fromAccount.getAccNumber());
-                    }
-                    else
-                    {
-                        System.out.println("Недостаточно средств для перевода");
-                    }
-                }
-                if (amount <= limit && getBalance(fromAccountNum) > amount)
-                {
-                    fromAccount.setMoney(accounts.get(fromAccountNum).getMoney() - amount);
-                    toAccount.setMoney(accounts.get(toAccountNum).getMoney() + amount);
-                    System.out.println(toAccountNum + ": перевод в размере " + amount + "р. от " + fromAccount.getAccNumber());
-                }
-                else
-                {
-                    System.out.println("Недостаточно средств для перевода");
+        String comparingFrom = fromAccount.getAccNumber();
+        String comparingTo = toAccount.getAccNumber();
+
+        if (comparingFrom.compareTo(comparingTo) < 0)
+        {
+            synchronized (fromAccount) {
+                synchronized (toAccount) {
+                    transferAfterCheckMonitor(fromAccountNum, toAccountNum, amount);
                 }
             }
+        }
+        else if (comparingFrom.compareTo(comparingTo) > 0)
+        {
+            synchronized (toAccount) {
+                synchronized (fromAccount) {
+                    transferAfterCheckMonitor(fromAccountNum, toAccountNum, amount);
+                }
+            }
+        }
+        else
+        {
+            System.out.println("Операция невозможна");
         }
     }
     /**
@@ -93,5 +79,42 @@ public class Bank {
             atomicLong.addAndGet(entry.getValue().getMoney() + sumAllAcc);
         }
         return atomicLong.get();
+    }
+
+    public void transferAfterCheckMonitor(final String fromAccountNum, final String toAccountNum, final long amount) throws InterruptedException
+    {
+        Account fromAccount = accounts.get(fromAccountNum);
+        Account toAccount = accounts.get(toAccountNum);
+        boolean block;
+
+        if (amount >= limit)
+        {
+            block = isFraud(fromAccountNum,toAccountNum,amount);
+            if (!block)
+            {
+                System.out.println(fromAccountNum + " перевел " + toAccountNum + " выше 50_000 -> аккаунты будут заблокированы");
+                return;
+            }
+            if (getBalance(fromAccountNum) > amount)
+            {
+                fromAccount.setMoney(accounts.get(fromAccountNum).getMoney() - amount);
+                toAccount.setMoney(accounts.get(toAccountNum).getMoney() + amount);
+                System.out.println(toAccountNum + ": перевод в размере " + amount + "р. от " + fromAccount.getAccNumber());
+            }
+            else
+            {
+                System.out.println("Недостаточно средств для перевода");
+            }
+        }
+        if (amount <= limit && getBalance(fromAccountNum) > amount)
+        {
+            fromAccount.setMoney(accounts.get(fromAccountNum).getMoney() - amount);
+            toAccount.setMoney(accounts.get(toAccountNum).getMoney() + amount);
+            System.out.println(toAccountNum + ": перевод в размере " + amount + "р. от " + fromAccount.getAccNumber());
+        }
+        else
+        {
+            System.out.println("Недостаточно средств для перевода");
+        }
     }
 }

@@ -7,8 +7,13 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor()
-public class Account
+public class Account implements Comparable<Account>
 {
     private String accNumber;
     private long money;
+
+    @Override
+    public int compareTo(Account a) {
+        return this.getAccNumber().compareTo(a.getAccNumber());
+    }
 }
