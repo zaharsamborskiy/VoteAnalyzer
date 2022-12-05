@@ -21,8 +21,8 @@ public class Main
         stream.write(result.getBytes());
         stream.flush();
         stream.close();
-
     }
+
     public static String createSitemapString(Node node, int level) {
         String tabs = String.join("", Collections.nCopies(level, "\t"));
         StringBuilder result = new StringBuilder(tabs + node.getUrl());
