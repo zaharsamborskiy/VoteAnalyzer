@@ -7,7 +7,6 @@ import java.util.concurrent.ForkJoinPool;
 
 public class Main
 {
-    static HashMap<Nodes, Integer> stringSet;
     //https://lenta.ru/
     //https://skillbox.ru/
     private static String url = "https://lenta.ru/";

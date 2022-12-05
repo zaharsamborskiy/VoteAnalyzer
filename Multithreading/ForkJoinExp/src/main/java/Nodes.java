@@ -40,14 +40,31 @@ public class Nodes extends RecursiveAction
 
         for (Node pages : node.getChildren())
         {
-         Nodes task = new Nodes(new Node(pages.getUrl()));
-         task.fork();
-         taskSet.add(task);
+            Nodes task = new Nodes(new Node(pages.getUrl()));
+            task.fork();
+            taskSet.add(task);
         }
 
         for (Nodes task : taskSet)
         {
+            task.compute();
             task.join();
+        }
+    }
+
+    private void recursive(String url) throws IOException, InterruptedException {
+        Thread.sleep(250);
+        Document doc = Jsoup.connect(url).ignoreHttpErrors(true).get();
+        Elements href = doc.select("a[href]");
+        for (Element e : href) {
+            String page = e.absUrl("href");
+            if (correctLink(page)) {
+                node.addChildren(new Node(page));
+            }
+        }
+        for (Node pages : node.getChildren())
+        {
+            recursive(pages.getUrl());
         }
     }
 
