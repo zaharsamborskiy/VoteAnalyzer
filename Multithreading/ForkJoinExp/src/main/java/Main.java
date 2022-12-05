@@ -1,19 +1,35 @@
-import java.util.Set;
+import java.io.*;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.TreeSet;
 import java.util.concurrent.ForkJoinPool;
 
+
 public class Main
 {
-    static Set<String> stringSet;
+    static HashMap<Nodes, Integer> stringSet;
+    //https://lenta.ru/
+    //https://skillbox.ru/
     private static String url = "https://lenta.ru/";
     private static final String fileRecord = "src/main/resources/fileSiteMap.txt";
 
-    public static void main(String[] args)
-    {
-        Set<String> stringSet = new ForkJoinPool().invoke(new Nodes(url, url, new TreeSet<>()));
-        stringSet.forEach(System.out::println);
+    public static void main(String[] args) throws IOException {
+        Node nodeParent = new Node(url);
+        new ForkJoinPool().invoke(new Nodes(nodeParent));
+
+        FileOutputStream stream = new FileOutputStream(fileRecord);
+        String result = createSitemapString(nodeParent, nodeParent.getLevel());
+        stream.write(result.getBytes());
+        stream.flush();
+        stream.close();
 
     }
-
-
+    public static String createSitemapString(Node node, int level) {
+        String tabs = String.join("", Collections.nCopies(level, "\t"));
+        StringBuilder result = new StringBuilder(tabs + node.getUrl());
+        node.getChildren().forEach(child -> {
+            result.append("\n").append(createSitemapString(child, level + 1));
+        });
+        return result.toString();
+    }
 }

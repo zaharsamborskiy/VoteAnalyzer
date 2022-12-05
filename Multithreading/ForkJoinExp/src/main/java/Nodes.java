@@ -1,85 +1,63 @@
-import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
 import java.io.IOException;
-import java.util.ArrayList;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import java.util.concurrent.RecursiveTask;
+import java.util.*;
+import java.util.concurrent.RecursiveAction;
 
 
-public class Nodes extends RecursiveTask<Set<String>>
+public class Nodes extends RecursiveAction
 {
-    private String node;
-    private Set<String> allUrls;
-    private String rootUrl;
-
-    public Nodes(String node, String rootUrl, Set<String> allUrls) {
-        this.node = node;
-        this.rootUrl = rootUrl;
-        this.allUrls = allUrls;
-        allUrls.add(rootUrl);
+    private Node node;
+    private static Set<String> allChildrens = new TreeSet<>();
+    public Nodes(Node url)
+    {
+        this.node = url;
     }
 
     @Override
-    protected Set<String> compute()
+    protected void compute()
     {
-        List<Nodes> taskList = new ArrayList<>();
+        Set<Nodes> taskSet = new HashSet<>();
         try
         {
             Thread.sleep(250);
-            Connection connection = Jsoup.connect(rootUrl).ignoreContentType(true);
-            Document document = connection.get();
-            Elements aBody = document.select("body").select("a");
-            for (Element e : aBody)
-            {
-                String child = e.absUrl("href");
-                if (check(removeRootInTask(rootUrl,child)) & !allUrls.contains((removeRootInTask(rootUrl, child))))
-                {
-                    allUrls.add(removeRootInTask(rootUrl, child));
-                    Nodes task = new Nodes(rootUrl, child, allUrls);
-                    task.fork();
-                    taskList.add(task);
-                }
-                for (Nodes nodes : taskList)
-                {
-                    allUrls.addAll(nodes.join());
+            Document doc = Jsoup.connect(node.getUrl()).ignoreHttpErrors(true).get();
+            Elements href = doc.select("a[href]");
+            for (Element e : href) {
+                String page = e.absUrl("href");
+                if (correctLink(page)) {
+                    allChildrens.add(page);
+                    node.addChildren(new Node(page));
                 }
             }
-
         }
-        catch (InterruptedException | IOException e)
+        catch (IOException | InterruptedException e)
         {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
 
-        return allUrls;
-    }
-
-    private boolean check(String url)
-    {
-        return (!url.isEmpty()
-                && url.startsWith(node)
-                && !url.contains("png")
-                && !url.contains("jpg")
-                && !url.contains("#"))
-                && !url.contains("@")
-                && !url.contains("pdf");
-    }
-
-    private String removeRootInTask(String rootUrl, String childUrl)
-    {
-        if (childUrl.contains(rootUrl))
+        for (Node pages : node.getChildren())
         {
-            childUrl.replaceAll(rootUrl, "");
+         Nodes task = new Nodes(new Node(pages.getUrl()));
+         task.fork();
+         taskSet.add(task);
         }
-        return childUrl;
+
+        for (Nodes task : taskSet)
+        {
+            task.join();
+        }
     }
 
+    private boolean correctLink(String url)
+    {
+        return ((!url.isEmpty())
+                && (url.startsWith(node.getUrl()))
+                && (!url.contains("@"))
+                && (!allChildrens.contains(url))
+                && (!url.contains("#"))
+                && (!url.matches("([^\\s]+(\\.(?i)(jpg|png|gif|bmp|pdf))$)")));
+    }
 }
