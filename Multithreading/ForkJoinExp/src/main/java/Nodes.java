@@ -2,6 +2,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.RecursiveAction;
@@ -15,6 +17,7 @@ public class Nodes extends RecursiveAction
     {
         this.node = url;
     }
+
 
     @Override
     protected void compute()
@@ -47,26 +50,17 @@ public class Nodes extends RecursiveAction
 
         for (Nodes task : taskSet)
         {
-            task.compute();
+            Nodes pagepage = task;
+            pagepage.fork();
+            if (task.node.getChildren().size() >= 1)
+            {
+                node.addChildren(pagepage.node);
+
+            }
             task.join();
         }
     }
 
-    private void recursive(String url) throws IOException, InterruptedException {
-        Thread.sleep(250);
-        Document doc = Jsoup.connect(url).ignoreHttpErrors(true).get();
-        Elements href = doc.select("a[href]");
-        for (Element e : href) {
-            String page = e.absUrl("href");
-            if (correctLink(page)) {
-                node.addChildren(new Node(page));
-            }
-        }
-        for (Node pages : node.getChildren())
-        {
-            recursive(pages.getUrl());
-        }
-    }
 
     private boolean correctLink(String url)
     {

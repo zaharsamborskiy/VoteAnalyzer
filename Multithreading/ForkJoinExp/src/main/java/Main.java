@@ -1,7 +1,6 @@
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.TreeSet;
 import java.util.concurrent.ForkJoinPool;
 
 
@@ -9,7 +8,7 @@ public class Main
 {
     //https://lenta.ru/
     //https://skillbox.ru/
-    private static String url = "https://lenta.ru/";
+    private static String url = "https://skillbox.ru/";
     private static final String fileRecord = "src/main/resources/fileSiteMap.txt";
 
     public static void main(String[] args) throws IOException {
