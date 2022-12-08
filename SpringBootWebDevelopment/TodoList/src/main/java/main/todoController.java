@@ -1,60 +1,84 @@
 package main;
 
+import main.model.TodoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import response.TodoSingle;
+import main.model.TodoSingle;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
 public class todoController
 {
+    @Autowired
+    private TodoRepository todoRepository;
+
     @GetMapping("/todo/")
     public List<TodoSingle> list()
     {
-        return Storage.getAllToDo();
+        Iterable<TodoSingle> todoIterable = todoRepository.findAll();
+        ArrayList<TodoSingle> arrayTodo = new ArrayList<>();
+        for (TodoSingle todoSingle : todoIterable)
+        {
+            arrayTodo.add(todoSingle);
+        }
+        return arrayTodo;
     }
     @PostMapping("/todo/")
     public int add(TodoSingle todoSingle)
     {
-        return Storage.addToDo(todoSingle);
+        TodoSingle todoRepo = todoRepository.save(todoSingle);
+        return todoRepo.getId();
     }
 
     @GetMapping("/todo/{id}")
     public ResponseEntity get(@PathVariable int id)
     {
-        TodoSingle todoSingle = Storage.getToDo(id);
-        if (todoSingle == null)
+        Optional<TodoSingle> optional = todoRepository.findById(id);
+        if (!optional.isPresent())
         {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-        return new ResponseEntity(todoSingle, HttpStatus.OK);
+        return new ResponseEntity(optional.get(), HttpStatus.OK);
     }
+
     @PutMapping(value = "/todo/{id}")
     public ResponseEntity<TodoSingle> update(@PathVariable int id, @ModelAttribute TodoSingle todoSingle)
     {
-        if (Storage.todoMap.containsKey(id)) {
-            Storage.update(id, todoSingle);
+        Optional<TodoSingle> todoRepo = todoRepository.findById(id);
+        if (todoRepo.isPresent()) {
+            todoRepository.save(todoSingle);
             return new ResponseEntity<>(HttpStatus.CREATED);
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).eTag("id not found").body(null);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 
     @PutMapping("/todo/")
-    public ResponseEntity updateAllCourses(int year)
+    public ResponseEntity updateAllTodos(int year)
     {
-        Storage.updateAll(year);
+        Iterable<TodoSingle> iterable = todoRepository.findAll();
+        ArrayList<TodoSingle> arrayList = new ArrayList<>();
+        for (TodoSingle todoSingle : iterable)
+        {
+            todoSingle.setYear(year);
+            arrayList.add(todoSingle);
+        }
+        todoRepository.saveAll(iterable);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @DeleteMapping("/todo/{id}")
     public ResponseEntity delete(@PathVariable int id)
     {
-        if (Storage.todoMap.containsKey(id))
+        Optional<TodoSingle> todoRepo = todoRepository.findById(id);
+        if (todoRepo.isPresent())
         {
-            Storage.delete(id);
+            todoRepository.delete(todoRepo.get());
             return new ResponseEntity(HttpStatus.OK);
         }
         return new ResponseEntity(HttpStatus.NOT_FOUND);
@@ -63,11 +87,12 @@ public class todoController
     @DeleteMapping("/todo/")
     public ResponseEntity deleteAllToDO()
     {
-        if (Storage.todoMap.isEmpty())
+        Iterable<TodoSingle> iterable = todoRepository.findAll();
+        if (iterable.iterator().hasNext())
         {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            todoRepository.deleteAll();
+            return new ResponseEntity<>(HttpStatus.OK);
         }
-        Storage.deleteAllTodos();
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

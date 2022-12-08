@@ -1,6 +1,6 @@
 package main;
 
-import response.TodoSingle;
+import main.model.TodoSingle;
 
 
 import java.util.ArrayList;
