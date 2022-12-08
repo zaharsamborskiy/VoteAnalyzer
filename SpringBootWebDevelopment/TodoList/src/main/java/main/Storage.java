@@ -7,16 +7,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class Storage
 {
-    private static int currentId = 1;
+    private static AtomicInteger atomicInteger = new AtomicInteger();
     public static ConcurrentHashMap<Integer ,TodoSingle> todoMap = new ConcurrentHashMap<>();
 
-    public synchronized static int addToDo(TodoSingle todoSingle)
+    public static int addToDo(TodoSingle todoSingle)
     {
-        int id = currentId++;
+        int id = atomicInteger.incrementAndGet();
         todoSingle.setId(id);
         todoMap.put(id,todoSingle);
         return id;
