@@ -17,7 +17,6 @@ public class todoController
 {
     @Autowired
     private TodoRepository todoRepository;
-
     @GetMapping("/todo/")
     public List<TodoSingle> list()
     {
