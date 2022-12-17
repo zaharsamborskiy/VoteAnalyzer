@@ -64,6 +64,7 @@ public class DBConnection {
             System.out.println(("\t" + rs.getString("name") + " (" +
                     rs.getString("birthDate") + ") - " + rs.getInt("c")));
         }
+        rs.close();
     }
     public static void multiInsert() throws SQLException
     {
