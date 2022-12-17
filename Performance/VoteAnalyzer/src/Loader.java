@@ -1,46 +1,63 @@
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
 
 public class Loader
 {
     /**
-     *                                 +     Затрачено      +       Затрачено   +
-     *         Оптимизация             +      времени       +        памяти     +
-     * ________________________________+____________________+___________________+
-     * + Парсинг через DOM             +    2479-2561MS     +       764-900MB   +
-     * +-------------------------------+--------------------+-------------------+
-     * + SAX по умолчанию с видео      +      690MS         +       40-47.9MB   +
-     * +-------------------------------+--------------------+-------------------+
-     * + SAX внедрение StringBuilder   +    800-820MS       +       90-110MB    +
-     * +-------------------------------+--------------------+-------------------+
-     * + SAX замена Integer на Byte    +    625-670MS       +       34-42MB     +
-     * --------------------------------+--------------------+-------------------+
-     * + SAX c Voter, Byte             +                    +                   +
-     * + замена у Voter Date на String +    430-472MS       +       27-33MB     +
-     * --------------------------------+--------------------+-------------------+
+     *                                 +     Затрачено      +       Затрачено     +
+     *         Файлы                   +      времени       +        памяти       +
+     * ________________________________+____________________+_____________________+
+     * + Парсинг файла 0.2М.xml        +    ≈ 512MS         +       ≈ 21MB        +
+     * +-------------------------------+--------------------+---------------------+
+     * + Парсинг файла 1М.xml          +   ≈ 1.730MS        +       ≈ 29MB        +
+     * +-------------------------------+--------------------+---------------------+
+     * + Парсинг файла 18М.xml         +   ≈ 12.692MS       +       38-90MB       +
+     * +-------------------------------+--------------------+---------------------+
+     * + Парсинг файла 1572М.xml       +   ≈ 424.650MS      + первый запрос  42MB +
+     * +                               +   (около 7 мин)    + второй запрос  40MB +
+     * --------------------------------+--------------------+---------------------+
      */
 
+    private static final String DATA_02M = "res/data-0.2M.xml";
+    private static final String DATA_1M = "res/data-1M.xml";
+    private static final String DATA_18M = "res/data-18M.xml";
+    private static final String DATA_1572M = "res/data-1572M.xml";
 
     public static void main(String[] args) throws Exception {
-        String fileName = "res/data-18M.xml";
+        String fileName = DATA_1572M;
         long start = System.currentTimeMillis();
 
-        parseSaxFile(fileName);
-//        DOMHandler.parseFile(fileName);
-//        DOMHandler.printDuplicatedVotersFromDOM();
+        parseInSQL(fileName);
+
         long usage = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-        System.out.println("\nUsed memory: " + (double) usage / Math.pow(2, 20) + "MB\n" +
-                "Used time: " + (System.currentTimeMillis() - start)+ "MS" + "\n");
-
-
+        System.out.println("\nUsed memory: "
+                + (double) usage / Math.pow(2, 20) + "MB\n"
+                + "Used time: " + (System.currentTimeMillis() - start)+ "MS" + "\n");
+        try{
+            DBConnection.printVoterCounts();
+        }catch (SQLException e)
+        {
+            e.printStackTrace();
+        }finally {
+            DBConnection.getConnection().close();
+        }
     }
-    private static void parseSaxFile(String fileName) throws Exception
-    {
+
+    public static void parseInSQL(String file) throws SQLException, IOException, SAXException, ParserConfigurationException {
+        DBConnection.connection = DBConnection.getConnection();
+        DBConnection.connection.setAutoCommit(false);
+        DBConnection.preparedStatement = DBConnection
+                .getConnection()
+                .prepareStatement("INSERT INTO voter_count(name, birthDate) " + "VALUES (?, ?)");
+
         SAXParserFactory factory = SAXParserFactory.newInstance();
         SAXParser parser = factory.newSAXParser();
-        XMLHandler handler = new XMLHandler();
-        parser.parse(new File(fileName), handler);
-        handler.printDuplicatedVoters();
+        parser.parse(new File(file), new XMLHandler());
     }
 }

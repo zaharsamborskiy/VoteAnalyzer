@@ -1,3 +1,4 @@
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,9 +35,9 @@ public class TimePeriod implements Comparable<TimePeriod> {
     public void appendTime(Date visitTime) {
         SimpleDateFormat dayFormat = new SimpleDateFormat("yyyy.MM.dd");
         if (!dayFormat.format(new Date(from))
-            .equals(dayFormat.format(new Date(visitTime.getTime())))) {
+                .equals(dayFormat.format(new Date(visitTime.getTime())))) {
             throw new IllegalArgumentException(
-                "Visit time must be within the same day as the current TimePeriod!");
+                    "Visit time must be within the same day as the current TimePeriod!");
         }
         long visitTimeTs = visitTime.getTime();
         if (visitTimeTs < from) {

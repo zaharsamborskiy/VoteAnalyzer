@@ -24,23 +24,22 @@ public class DOMHandler
         Document doc = db.parse(new File(fileName));
 
         findEqualVoters(doc);
-        fixWorkTimes(doc);
+//        fixWorkTimes(doc);
     }
 
-    private static void findEqualVoters(Document doc) throws Exception {
+    private static void findEqualVoters(Document doc) throws Exception
+    {
         NodeList voters = doc.getElementsByTagName("voter");
         int votersCount = voters.getLength();
-        for (int i = 0; i < votersCount; i++) {
+        for(int i = 0; i < votersCount; i++)
+        {
             Node node = voters.item(i);
             NamedNodeMap attributes = node.getAttributes();
-
             String name = attributes.getNamedItem("name").getNodeValue();
-            String birthDay = (attributes.getNamedItem("birthDay").getNodeValue());
-
-            Voter voter = new Voter(name, birthDay);
-            Integer count = voterCounts.get(voter);
-            voterCounts.put(voter, count == null ? 1 : count + 1);
+            String birthDay = attributes.getNamedItem("birthDay").getNodeValue();
+            DBConnection.countVoter(name, birthDay);
         }
+            DBConnection.multiInsert();
     }
 
     private static void fixWorkTimes(Document doc) throws Exception {
@@ -61,19 +60,22 @@ public class DOMHandler
         }
     }
     //Printing results
-    public static void printDuplicatedVotersFromDOM() {
+    public static void printDuplicatedVotersFromDOM() throws Exception {
         System.out.println("Voting station work times: ");
-        for (Integer votingStation : voteStationWorkTimes.keySet()) {
+        for(Integer votingStation : voteStationWorkTimes.keySet())
+        {
             WorkTime workTime = voteStationWorkTimes.get(votingStation);
             System.out.println("\t" + votingStation + " - " + workTime);
         }
 
         System.out.println("Duplicated voters: ");
-        for (Voter voter : voterCounts.keySet()) {
+        for(Voter voter : voterCounts.keySet())
+        {
             Integer count = voterCounts.get(voter);
-            if (count > 1) {
+            if(count > 1) {
                 System.out.println("\t" + voter + " - " + count);
             }
         }
     }
 }
+
