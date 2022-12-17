@@ -24,13 +24,15 @@ public class DBConnection {
                         "id INT NOT NULL AUTO_INCREMENT, " +
                         "name TINYTEXT NOT NULL, " +
                         "birthDate DATE NOT NULL, " +
-                        "PRIMARY KEY(id))");
+                        "count INT NOT NULL, " +
+                        "PRIMARY KEY(id))" );
                 /*connection.createStatement().execute("CREATE TABLE voter_count(" +
                         "id INT NOT NULL AUTO_INCREMENT, " +
                         "name TINYTEXT NOT NULL, " +
                         "birthDate DATE NOT NULL, " +
                         "count INT NOT NULL, " +
-                        "PRIMARY KEY(id))");*/
+                        "PRIMARY KEY(id)," +
+                        "UNIQUE KEY name_date(name(50), birthDate))");*/
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -39,13 +41,11 @@ public class DBConnection {
     }
 
     public static void printVoterCounts () throws SQLException {
-        String sql = "SELECT *, count(*) c FROM learn.voter_count group by concat(name, birthDate) having c > 1 order by name";
+        String sql = "SELECT *, count(*) c FROM learn.voter_count WHERE `count` > 1;";
         ResultSet rs = DBConnection.connection.createStatement().executeQuery(sql);
-
         service.submit(() -> {
             try {
                 if (!rs.next()) {
-                    rs.close();
                     service.shutdown();
                 }
             } catch (SQLException e) {
@@ -54,7 +54,7 @@ public class DBConnection {
                 service.shutdown();
             }
         });
-        message(rs);
+//        message(rs);
     }
 
     private static void message(ResultSet rs) throws SQLException
@@ -70,8 +70,9 @@ public class DBConnection {
     {
         String sql = "INSERT INTO learn.voter_count(name, birthDate, `count`) " +
                 "VALUES " + insertQuery.toString() +
-                "on duplicate key update `count` = `count` + 1;";
+                "on duplicate key update `count` = `count` + '1';";
         DBConnection.getConnection().createStatement().execute(sql);
+        insertQuery = new StringBuilder();
     }
 
     public static void countVoter(String name, String birthDay) throws SQLException
@@ -83,6 +84,6 @@ public class DBConnection {
                 .append(name)
                 .append("', '")
                 .append(finalBirthDay)
-                .append("', 1) ");
+                .append("', '1') ");
     }
 }
